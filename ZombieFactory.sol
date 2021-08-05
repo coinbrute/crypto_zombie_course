@@ -19,6 +19,11 @@ contract ZombieFactory {
     
     // state variable of zombies to hold all zombies created by contract
     Zombie[] public zombies;
+    
+    // mappings key/value pairs to map zombies to owner 
+    mapping (uint => address) public zombieToOwner;
+    // key/value pair for tracking zombies owned per address
+    mapping (address => uint) ownerZombieCount;
 
     // this is a private function used only within the contract 
     // it creates a zombie, storing in the array 
@@ -27,6 +32,10 @@ contract ZombieFactory {
         // create new zombie and push to zombie array
         // grab index and store locally
         uint id = zombies.push(Zombie(_name, _dna)) - 1;
+        // map owner to id of zombie
+        zombieToOwner[id] = msg.sender;
+        // increase zombie count for owner
+        ownerZombieCount[msg.sender]++;
         // emit NewZombie event using id, name, dna
         emit NewZombie(id, _name, _dna);
     }
@@ -47,6 +56,8 @@ contract ZombieFactory {
     // this returns the dna uint which is used to create the zombie internally
     // that function emits the event to the front end
     function createRandomZombie(string _name) public {
+        // require that sender has not called this before
+        require(ownerZombieCount[msg.sender] == 0);
         uint randDna = _generateRandomDna(_name);
         _createZombie(_name, randDna);
     } 
