@@ -4,4 +4,14 @@ import "./ZombieFactory.sol";
 
 contract ZombieFeeding is ZombieFactory {
 
+  // function to randomly generate a new zombie dna based on current one
+  // creates new zombie from old one when it "feeds"
+  function feedAndMultiply(uint _zombieId, uint _targetDna) public {
+    require(msg.sender == zombieToOwner[_zombieId]);
+    Zombie storage myZombie = zombies[_zombieId];
+    _targetDna = _targetDna % dnaModulus;
+    uint newDna = (myZombie.dna + _targetDna) / 2;
+    _createZombie("NoName", newDna);
+  }
+  
 }
