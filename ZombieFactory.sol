@@ -25,7 +25,7 @@ contract ZombieFactory {
     // key/value pair for tracking zombies owned per address
     mapping (address => uint) ownerZombieCount;
 
-    // this is a private function used only within the contract 
+    // this is a internal function used only within inherited contracts
     // it creates a zombie, storing in the array 
     // and emits a new zombie event
     function _createZombie(string _name, uint _dna) private {
