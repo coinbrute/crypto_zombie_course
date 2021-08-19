@@ -1,6 +1,8 @@
 pragma solidity ^0.4.25;
 
-contract ZombieFactory {
+import "./ownable.sol";
+
+contract ZombieFactory is Ownable {
     
     // triggered when new zombie is created 
     // will be used by front end to display zombies created
@@ -19,6 +21,8 @@ contract ZombieFactory {
         uint dna;
         uint32 level;
         uint32 readyTime;
+        uint16 winCount;
+        uint16 lossCount;
     }
     
     // state variable of zombies to hold all zombies created by contract
@@ -35,7 +39,7 @@ contract ZombieFactory {
     function _createZombie(string _name, uint _dna) private {
         // create new zombie and push to zombie array
         // grab index and store locally
-        uint id = zombies.push(Zombie(_name, _dna, 1, uint32(now + cooldownTime))) - 1;
+        uint id = zombies.push(Zombie(_name, _dna, 1, uint32(now + cooldownTime), 0, 0)) - 1;
         // map owner to id of zombie
         zombieToOwner[id] = msg.sender;
         // increase zombie count for owner
@@ -63,6 +67,7 @@ contract ZombieFactory {
         // require that sender has not called this before
         require(ownerZombieCount[msg.sender] == 0);
         uint randDna = _generateRandomDna(_name);
+        randDna = randDna - randDna % 100;
         _createZombie(_name, randDna);
     } 
     
